@@ -17,6 +17,7 @@ package com.example.android.sunshine.ui.list;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.sunshine.R;
-import com.example.android.sunshine.data.database.WeatherEntry;
+import com.example.android.sunshine.data.database.ListWeatherEntry;
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 import com.example.android.sunshine.utilities.SunshineWeatherUtils;
 
@@ -57,7 +58,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      * boolean resources.
      */
     private final boolean mUseTodayLayout;
-    private List<WeatherEntry> mForecast;
+    private List<ListWeatherEntry> mForecast;
 
     /**
      * Creates a ForecastAdapter.
@@ -104,7 +105,7 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      */
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-        WeatherEntry currentWeather = mForecast.get(position);
+        ListWeatherEntry currentWeather = mForecast.get(position);
 
         /****************
          * Weather Icon *
@@ -232,9 +233,47 @@ class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ForecastAdapt
      *
      * @param newForecast the new list of forecasts to use as ForecastAdapter's data source
      */
-    void swapForecast(final List<WeatherEntry> newForecast) {
-        mForecast = newForecast;
-        notifyDataSetChanged();
+    void swapForecast(final List<ListWeatherEntry> newForecast) {
+        // If there was no forecast data, then recreate all of the list
+        if (mForecast == null) {
+            mForecast = newForecast;
+            notifyDataSetChanged();
+        } else {
+            /*
+             * Otherwise we use DiffUtil to calculate the changes and update accordingly. This
+             * shows the four methods you need to override to return a DiffUtil callback. The
+             * old list is the current list stored in mForecast, where the new list is the new
+             * values passed in from the observing the database.
+             */
+
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return mForecast.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return newForecast.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return mForecast.get(oldItemPosition).getId() ==
+                            newForecast.get(newItemPosition).getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    ListWeatherEntry newWeather = newForecast.get(newItemPosition);
+                    ListWeatherEntry oldWeather = mForecast.get(oldItemPosition);
+                    return newWeather.getId() == oldWeather.getId()
+                            && newWeather.getDate().equals(oldWeather.getDate());
+                }
+            });
+            mForecast = newForecast;
+            result.dispatchUpdatesTo(this);
+        }
     }
 
     /**

@@ -28,8 +28,7 @@ import com.example.android.sunshine.utilities.SunshineDateUtils
 import com.example.android.sunshine.utilities.SunshineWeatherUtils
 
 import java.util.Date
-import com.example.android.sunshine.AppExecutors
-
+import com.example.android.sunshine.utilities.InjectorUtils
 
 
 /**
@@ -55,30 +54,14 @@ class DetailActivity : AppCompatActivity() {
         val timestamp = intent.getLongExtra(WEATHER_ID_EXTRA, -1)
         val date = Date(timestamp)
 
-        viewModel = ViewModelProviders.of(this).get(DetailActivityViewModel::class.java)
+        // Get the ViewModel from the factory
+        val factory = InjectorUtils.provideDetailViewModelFactory(this.applicationContext, date)
+        viewModel = ViewModelProviders.of(this, factory).get(DetailActivityViewModel::class.java)
 
         viewModel?.weather?.observe(this, Observer<WeatherEntry> { weatherEntry ->
             // Update the UI
             weatherEntry?.let { bindWeatherToUI(it) }
         })
-
-        AppExecutors.getInstance().diskIO().execute {
-            try {
-
-                // Pretend this is the network loading data
-                Thread.sleep(4000)
-                val today = SunshineDateUtils.getNormalizedUtcDateForToday()
-                var pretendWeatherFromDatabase = WeatherEntry(1, today, 88.0, 99.0, 71.0, 1030.0, 74.0, 5.0)
-                viewModel?.setWeather(pretendWeatherFromDatabase)
-
-                Thread.sleep(2000)
-                pretendWeatherFromDatabase = WeatherEntry(1, today, 50.0, 60.0, 46.0, 1044.0, 70.0, 100.0)
-                viewModel?.setWeather(pretendWeatherFromDatabase)
-
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-        }
 
     }
 
@@ -104,8 +87,8 @@ class DetailActivity : AppCompatActivity() {
          * the date representation for the local date in local time.
          * SunshineDateUtils#getFriendlyDateString takes care of this for us.
          */
-        val localDateMidnightGmt = weatherEntry.date.time
-        val dateText = SunshineDateUtils.getFriendlyDateString(this@DetailActivity, localDateMidnightGmt, true)
+        val localDateMidnightGmt = weatherEntry.date?.time
+        val dateText = SunshineDateUtils.getFriendlyDateString(this@DetailActivity, localDateMidnightGmt!!, true)
         mDetailBinding!!.primaryInfo?.date?.text = dateText
 
         /***********************
