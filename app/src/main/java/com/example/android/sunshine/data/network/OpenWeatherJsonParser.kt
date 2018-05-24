@@ -103,7 +103,7 @@ internal class OpenWeatherJsonParser {
          * Since this data is also sent in-order and the first day is always the current day, we're
          * going to take advantage of that to get a nice normalized UTC date for all of our weather.
          */
-            val normalizedUtcStartDay = SunshineDateUtils.getNormalizedUtcMsForToday()
+            val normalizedUtcStartDay = SunshineDateUtils.normalizedUtcMsForToday
 
             for (i in 0 until jsonWeatherArray.length()) {
                 // Get the JSON object representing the day

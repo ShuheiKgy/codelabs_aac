@@ -70,7 +70,7 @@ class SunshineRepository private constructor(private val mWeatherDao: WeatherDao
 
     fun getCurrentWeatherForecasts(): LiveData<List<ListWeatherEntry>> {
         initializeData()
-        val today = SunshineDateUtils.getNormalizedUtcDateForToday()
+        val today = SunshineDateUtils.normalizedUtcDateForToday
         return mWeatherDao.getCurrentWeatherForecasts(today)
     }
 
@@ -83,7 +83,7 @@ class SunshineRepository private constructor(private val mWeatherDao: WeatherDao
      * Deletes old weather data because we don't need to keep multiple days' data
      */
     private fun deleteOldData() {
-        val today = SunshineDateUtils.getNormalizedUtcDateForToday()
+        val today = SunshineDateUtils.normalizedUtcDateForToday
         mWeatherDao.deleteOldWeather(today)
     }
 
@@ -93,7 +93,7 @@ class SunshineRepository private constructor(private val mWeatherDao: WeatherDao
      * @return Whether a fetch is needed
      */
     private fun isFetchNeeded(): Boolean {
-        val today = SunshineDateUtils.getNormalizedUtcDateForToday()
+        val today = SunshineDateUtils.normalizedUtcDateForToday
         val count = mWeatherDao.countAllFutureWeather(today)
         return count < WeatherNetworkDataSource.NUM_DAYS
     }
