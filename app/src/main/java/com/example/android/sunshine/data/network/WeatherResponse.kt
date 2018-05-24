@@ -13,25 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.android.sunshine.data.network;
+package com.example.android.sunshine.data.network
 
-import android.support.annotation.NonNull;
-
-import com.example.android.sunshine.data.database.WeatherEntry;
+import com.example.android.sunshine.data.database.WeatherEntry
 
 /**
  * Weather response from the backend. Contains the weather forecasts.
  */
-class WeatherResponse {
-
-    @NonNull
-    private final WeatherEntry[] mWeatherForecast;
-
-    public WeatherResponse(@NonNull final WeatherEntry[] weatherForecast) {
-        mWeatherForecast = weatherForecast;
-    }
-
-    public WeatherEntry[] getWeatherForecast() {
-        return mWeatherForecast;
-    }
-}
+internal class WeatherResponse(val weatherForecast: Array<WeatherEntry?>)

@@ -155,10 +155,10 @@ public class WeatherNetworkDataSource {
                 // weather. It will decide whether to create a URL based off of the latitude and
                 // longitude or off of a simple location as a String.
 
-                URL weatherRequestUrl = NetworkUtils.getUrl();
+                URL weatherRequestUrl = NetworkUtils.INSTANCE.getUrl();
 
                 // Use the URL to retrieve the JSON
-                String jsonWeatherResponse = NetworkUtils.getResponseFromHttpUrl(weatherRequestUrl);
+                String jsonWeatherResponse = NetworkUtils.INSTANCE.getResponseFromHttpUrl(weatherRequestUrl);
 
                 // Parse the JSON into a list of weather forecasts
                 WeatherResponse response = new OpenWeatherJsonParser().parse(jsonWeatherResponse);

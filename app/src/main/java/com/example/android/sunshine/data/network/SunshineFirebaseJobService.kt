@@ -13,41 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.android.sunshine.data.network;
+package com.example.android.sunshine.data.network
 
-import android.util.Log;
+import android.util.Log
 
-import com.example.android.sunshine.utilities.InjectorUtils;
-import com.firebase.jobdispatcher.Job;
-import com.firebase.jobdispatcher.JobParameters;
-import com.firebase.jobdispatcher.JobService;
-import com.firebase.jobdispatcher.RetryStrategy;
+import com.example.android.sunshine.utilities.InjectorUtils
+import com.firebase.jobdispatcher.Job
+import com.firebase.jobdispatcher.JobParameters
+import com.firebase.jobdispatcher.JobService
+import com.firebase.jobdispatcher.RetryStrategy
 
 
-public class SunshineFirebaseJobService extends JobService {
-    private static final String LOG_TAG = SunshineFirebaseJobService.class.getSimpleName();
+class SunshineFirebaseJobService : JobService() {
 
     /**
      * The entry point to your Job. Implementations should offload work to another thread of
      * execution as soon as possible.
-     * <p>
+     *
+     *
      * This is called by the Job Dispatcher to tell us we should start our job. Keep in mind this
      * method is run on the application's main thread, so we need to offload work to a background
      * thread.
      *
      * @return whether there is more work remaining.
      */
-    @Override
-    public boolean onStartJob(final JobParameters jobParameters) {
-        Log.d(LOG_TAG, "Job service started");
+    override fun onStartJob(jobParameters: JobParameters): Boolean {
+        Log.d(LOG_TAG, "Job service started")
 
-        WeatherNetworkDataSource networkDataSource =
-                InjectorUtils.provideNetworkDataSource(this.getApplicationContext());
-        networkDataSource.fetchWeather();
+        val networkDataSource = InjectorUtils.provideNetworkDataSource(this.applicationContext)
+        networkDataSource.fetchWeather()
 
-        jobFinished(jobParameters, false);
+        jobFinished(jobParameters, false)
 
-        return true;
+        return true
     }
 
     /**
@@ -55,11 +53,14 @@ public class SunshineFirebaseJobService extends JobService {
      * most likely because the runtime constraints associated with the job are no longer satisfied.
      *
      * @return whether the job should be retried
-     * @see Job.Builder#setRetryStrategy(RetryStrategy)
+     * @see Job.Builder.setRetryStrategy
      * @see RetryStrategy
      */
-    @Override
-    public boolean onStopJob(JobParameters jobParameters) {
-        return true;
+    override fun onStopJob(jobParameters: JobParameters): Boolean {
+        return true
+    }
+
+    companion object {
+        private val LOG_TAG = SunshineFirebaseJobService::class.java.simpleName
     }
 }
