@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onItemClick(Date date) {
         Intent weatherDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
         long timestamp = date.getTime();
-        weatherDetailIntent.putExtra(DetailActivity.WEATHER_ID_EXTRA, timestamp);
+        weatherDetailIntent.putExtra(DetailActivity.Companion.getWEATHER_ID_EXTRA(), timestamp);
         startActivity(weatherDetailIntent);
     }
 
